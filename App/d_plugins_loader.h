@@ -33,6 +33,7 @@
 #include <QString>
 
 #include "interface_plugin.h"
+#include "i_type.h"
 
 typedef QSharedPointer<IPlugin> pIPlugin;
 
@@ -40,20 +41,26 @@ class DPluginsLoader : public QObject
 {
 	Q_OBJECT
 public:
-	explicit DPluginsLoader(const QString & pluginsPath, QObject * parent = nullptr);
+	explicit DPluginsLoader			(const QString & pluginsPath, QObject * parent = nullptr);
 
-	bool checkSignalEmit(IPlugin * plugin);
+	bool		loadPlugins			(const QString & pluginsPath);
 
-	bool checkTypeCreation(const QString & type);
+	pIPlugin	getPlugin			(const QString & pluginName);
+	IType *		getInstance			(const QString & typeName, const QVariant & parameters = QVariant(), QObject * parent = nullptr);
 
 public slots:
-	void	sltReceiveSignal(const QVariant & parameters);
+	void		sltReceiveSignal	(const QVariant & parameters);
 
 signals:
+	void	pluginLoaded		(const QString & name);
+	void	typeAvailable		(const QString & name);
 
 private:
-	QMap<QString, pIPlugin>	m_plugins;
-	QMap<QString, pIPlugin>	m_types;
+	bool		checkSignalEmit		(IPlugin * plugin);
+	bool		checkTypeCreation	(const QString & type);
+
+	QMap<QString, pIPlugin>		m_plugins;
+	QMap<QString, pIPlugin>		m_types;
 };
 
 #endif // D_PLUGINS_LOADER_H

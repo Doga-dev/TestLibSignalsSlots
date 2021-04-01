@@ -36,19 +36,20 @@ class INTERFACE_PLUGIN_SHARED_EXPORT IType : public QObject
 	Q_OBJECT
 
 public:
-	explicit IType(QObject * parent = nullptr);
+	IType(QObject * parent = nullptr);
 	virtual ~IType() {}
 
 	virtual QVariant	getParameters	() = 0;
 
 public slots:
 	virtual void		sltParameters	() = 0;
+	void				sltItfTraceSignalEmit	(const QVariant & parameters);
 
 signals:
 	void		sigParameters	(const QVariant & parameters);
 };
 
-#define ITypeIID "fr.doga.rd.box.IType"
-Q_DECLARE_INTERFACE(IType, ITypeIID)
+//#define ITypeIID "fr.doga.rd.box.IType"
+Q_DECLARE_INTERFACE(IType, IPluginIID)
 
 #endif // I_TYPE_H

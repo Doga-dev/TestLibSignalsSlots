@@ -37,6 +37,13 @@ DPluginsLoader::DPluginsLoader(const QString & pluginsPath, QObject * parent) : 
   , m_plugins()
   , m_types()
 {
+	if (! pluginsPath.isEmpty()) {
+		loadPlugins(pluginsPath);
+	}
+}
+
+bool DPluginsLoader::loadPlugins(const QString & pluginsPath)
+{
 	QDir dir(pluginsPath);
 	for (auto &filename : dir.entryList(QDir::Files)) {
 		QPluginLoader loader(dir.absoluteFilePath(filename));
@@ -48,14 +55,15 @@ DPluginsLoader::DPluginsLoader(const QString & pluginsPath, QObject * parent) : 
 				if (! name.isEmpty()) {
 					QSharedPointer<IPlugin> ptr = QSharedPointer<IPlugin>(plugin);
 					m_plugins.insert(name, ptr);
+					emit pluginLoaded(name);
 					QStringList types = plugin->pluginTypes();
 					if (! types.isEmpty()) {
 						foreach (QString type, types) {
 							m_types.insert(type, ptr);
 							qDebug() << "Type" << type << "loaded !";
+							emit typeAvailable(type);
 						}
 					}
-					qDebug() << "Plugin" << name << "loaded !";
 					checkSignalEmit(ptr.data());
 				}
 			}
@@ -63,11 +71,30 @@ DPluginsLoader::DPluginsLoader(const QString & pluginsPath, QObject * parent) : 
 	}
 	if (m_plugins.isEmpty()) {
 		qDebug() << "Couldn't load any plugin!";
-		return;
+		return false;
 	}
 	foreach (QString key, m_types.keys()) {
 		checkTypeCreation(key);
 	}
+	return true;
+}
+
+pIPlugin DPluginsLoader::getPlugin(const QString & pluginName)
+{
+	if (m_plugins.contains(pluginName)) {
+		return m_plugins.value(pluginName);
+	}
+	return nullptr;
+}
+
+IType * DPluginsLoader::getInstance(const QString & typeName, const QVariant & parameters, QObject * parent)
+{
+	IType * ptr = nullptr;
+	if (m_types.contains(typeName)) {
+		pIPlugin plgn = m_types.value(typeName);
+		ptr = qobject_cast<IType *>(plgn->getInstance(typeName, parameters, parent));
+	}
+	return ptr;
 }
 
 bool DPluginsLoader::checkSignalEmit(IPlugin * plugin)
@@ -103,13 +130,15 @@ bool DPluginsLoader::checkTypeCreation(const QString & type)
 			qDebug() << type <<  "did not return good values!" << params;
 			ret = false;
 		}
-//		if (ret) {
+		if (ret) {
 //			QObject::connect(tp01, & IType::sigParameters, this, & DPluginsLoader::sltReceiveSignal);
+			QObject::connect(tp01, SIGNAL(sigParameters(const QVariant &)), this, SLOT(sltReceiveSignal(const QVariant &)));
 //			tp01->sltParameters();
-//		}
+		}
 		if (ret) {
 			// Verify plugin emits its `name` with `QSignalSpy`.
 			QSignalSpy spy(tp01, & IType::sigParameters);
+//			QSignalSpy spy(tp01, SIGNAL(sigParameters(const QVariant &)));
 			QTimer::singleShot(100, tp01, & IType::sltParameters);
 			spy.wait();
 			if (spy.count() == 1) {

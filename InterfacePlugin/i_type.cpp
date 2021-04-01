@@ -23,7 +23,17 @@
  *
  ****************************************************************************
  */
+
+#include <QDebug>
+
 #include "i_type.h"
 
 IType::IType(QObject * parent) : QObject(parent)
-{}
+{
+	QObject::connect(this, &IType::sigParameters, this, &IType::sltItfTraceSignalEmit);
+}
+
+void IType::sltItfTraceSignalEmit(const QVariant & parameters)
+{
+	qDebug() << Q_FUNC_INFO << parameters;
+}

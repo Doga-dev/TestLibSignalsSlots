@@ -40,9 +40,9 @@ class PLUGIN0_SHARED_EXPORT Type01 : public IType, public IPluginTypeFactory<Typ
 	Q_OBJECT
 	Q_INTERFACES(IType)
 
-	explicit Type01(const QVariant & parameters, QObject * parent);
-
 public:
+	explicit Type01(const QVariant & parameters = QVariant(), QObject * parent = nullptr);
+
 	inline static QString	getTypeNameInternal()	{	return QStringLiteral("Type01");	};
 	static QObject * createInternal(const QVariant & parameters, QObject * parent) {
 		return new Type01(parameters, parent);
@@ -51,6 +51,7 @@ public:
 
 public slots:
 	void	sltParameters() Q_DECL_OVERRIDE;
+	void	sltTraceSignalEmit(const QVariant & parameters);
 
 signals:
 	void	sigParameters(const QVariant & parameters);

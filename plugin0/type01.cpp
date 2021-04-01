@@ -31,15 +31,30 @@
 Type01::Type01(const QVariant & parameters, QObject * parent) : IType(parent)
   , m_prms(parameters)
 {
+	if (QObject::connect(this, & Type01::sigParameters, this, &Type01::sltTraceSignalEmit)) {
+		qDebug() << Q_FUNC_INFO << "signal connection done";
+	} else {
+		qDebug() << Q_FUNC_INFO << "signal connection fail";
+	}
+	emit sigParameters("test constructor connection");
 }
 
 QVariant Type01::getParameters()
 {
 	return m_prms;
+	qDebug() << Q_FUNC_INFO << "before emit";
+	emit sigParameters("test getParameters");
+	qDebug() << Q_FUNC_INFO << "after emit";
 }
 
 void Type01::sltParameters()
 {
-	qDebug() << Q_FUNC_INFO;
+	qDebug() << Q_FUNC_INFO << "before emit";
 	emit sigParameters(m_prms);
+	qDebug() << Q_FUNC_INFO << "after emit";
+}
+
+void Type01::sltTraceSignalEmit(const QVariant & parameters)
+{
+	qDebug() << Q_FUNC_INFO << parameters;
 }
