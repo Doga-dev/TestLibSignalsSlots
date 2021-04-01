@@ -2,6 +2,7 @@ QT       -= gui
 
 TARGET = Plugin2
 TEMPLATE = lib
+CONFIG += plugin
 
 DEFINES += PLUGIN2_LIBRARY
 

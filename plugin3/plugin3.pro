@@ -3,6 +3,7 @@ QT       -= gui
 
 TARGET = Plugin3
 TEMPLATE = lib
+CONFIG += plugin
 
 DEFINES += PLUGIN3_LIBRARY
 

@@ -7,7 +7,7 @@
 class PLUGIN1_SHARED_EXPORT Plugin1 : public IPlugin
 {
   Q_OBJECT
-  Q_PLUGIN_METADATA(IID "IPlugin")
+  Q_PLUGIN_METADATA(IID IPluginIID)
   Q_INTERFACES(IPlugin)
 
 public:

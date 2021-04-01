@@ -8,6 +8,7 @@ QT       -= gui
 
 TARGET = Plugin0
 TEMPLATE = lib
+CONFIG += plugin
 
 DEFINES += PLUGIN0_LIBRARY
 

@@ -35,7 +35,6 @@ public slots:
 	virtual void			getVersion			() = 0;
 
 signals:
-	// Signal to be emitted in getName()
 	void		id			(QString value);
 	void		name		(QString value);
 	void		types		(QStringList values);
@@ -45,7 +44,6 @@ protected:
 	QMap<QString, TypeFactoryFunc>	m_types;
 };
 
-#define IPluginIID "fr.doga.rd.box.IPlugin"
 Q_DECLARE_INTERFACE(IPlugin, IPluginIID)
 
 #endif // INTERFACE_PLUGIN_H

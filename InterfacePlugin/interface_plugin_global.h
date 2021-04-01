@@ -3,6 +3,8 @@
 
 #include <QtCore/qglobal.h>
 
+#define IPluginIID "fr.doga.rd.box.IPlugin"
+
 #if defined(INTERFACE_PLUGIN_LIBRARY)
 #define INTERFACE_PLUGIN_SHARED_EXPORT Q_DECL_EXPORT
 #else
